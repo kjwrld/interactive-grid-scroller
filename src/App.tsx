@@ -1,7 +1,9 @@
 // App.tsx
 import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import GridBackground from "./GridBackground.tsx";
+import { CursorProvider } from "./CursorContext.tsx";
 import "./App.css";
 
 function App() {
@@ -18,17 +20,12 @@ function App() {
 
   return (
     <>
-      <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
-        <ambientLight />
-        <GridBackground cursorPosition={cursorPosition} />
-      </Canvas>
-      <div
-        className="mouse-overlay"
-        style={{
-          left: `${cursorPosition.x}px`,
-          top: `${cursorPosition.y}px`,
-        }}
-      />
+      <CursorProvider>
+        <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
+          <ambientLight />
+          <GridBackground cursorPosition={cursorPosition} />
+        </Canvas>
+      </CursorProvider>
     </>
   );
 }

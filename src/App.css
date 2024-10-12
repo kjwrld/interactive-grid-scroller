@@ -4,7 +4,7 @@ body {
   padding: 0;
   overflow: hidden;
   height: 100%;
-  background-color: #f7f7f7;
+  background-color: black;
 }
 
 #root {
@@ -22,12 +22,12 @@ canvas {
   top: 0;
   left: 0;
   pointer-events: none;
-  width: 100px;
-  height: 100px;
+  width: 600px;
+  height: 600px;
   background: radial-gradient(
     circle,
-    rgba(255, 0, 0, 0.5) 0%,
-    rgba(255, 0, 0, 0) 80%
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0) 100%
   );
   border-radius: 50%;
   transform: translate(-50%, -50%);

@@ -17,20 +17,19 @@ canvas {
   height: 100vh;
 }
 
-/* Red circle overlay following the cursor */
 .mouse-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  pointer-events: none; /* Avoid interfering with mouse events */
-  width: 100px; /* Adjust size for clarity */
+  pointer-events: none;
+  width: 100px;
   height: 100px;
   background: radial-gradient(
     circle,
     rgba(255, 0, 0, 0.5) 0%,
     rgba(255, 0, 0, 0) 80%
   );
-  border-radius: 50%; /* Make it a perfect circle */
-  transform: translate(-50%, -50%); /* Center the circle on the cursor */
-  transition: background-position 0.1s; /* Smooth movement */
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background-position 0.1s;
 }

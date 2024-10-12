@@ -7,7 +7,6 @@ import "./App.css";
 function App() {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
-  // Track mouse movement and update the cursor position
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setCursorPosition({ x: e.clientX, y: e.clientY });
@@ -21,11 +20,8 @@ function App() {
     <>
       <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
         <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <GridBackground />
+        <GridBackground cursorPosition={cursorPosition} />
       </Canvas>
-
-      {/* Overlay following the mouse */}
       <div
         className="mouse-overlay"
         style={{

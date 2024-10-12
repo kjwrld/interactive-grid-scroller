@@ -61,3 +61,40 @@ Putting that all together this is what we have so far:
 
 https://github.com/user-attachments/assets/c3741914-3adf-4e9e-9f37-8bea5b5b2ce3
 
+## Step 1:
+
+### Raycasting
+
+```
+// Update shader uniforms every frame
+useFrame((state) => {
+    
+    const { x, y } = cursorPosition;
+
+    // Convert mouse coordinates to normalized device coordinates (NDC)
+    const ndcX = (x / window.innerWidth) * 2 - 1;
+    const ndcY = -(y / window.innerHeight) * 2 + 1;
+
+    // Set the raycaster to the point coordinate
+    // Use the raycaster to find the point on the plane at z=0
+    raycaster.current.setFromCamera({ x: ndcX, y: ndcY }, camera);
+    raycaster.current.ray.intersectPlane(
+      new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
+      intersectionPoint
+    );
+
+    // Update the cursor uniform back in the shader
+    material.uniforms.uCursor.value.set(
+      intersectionPoint.x,
+      intersectionPoint.y
+    );
+    material.uniforms.uTime.value = state.clock.getElapsedTime();
+  }
+});
+```
+
+https://github.com/user-attachments/assets/f2cb4b55-915e-4592-988b-3c7ec2c4ecdf
+
+
+
+

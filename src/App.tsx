@@ -19,12 +19,10 @@ function App() {
 
   return (
     <>
-      {/* <CursorProvider> */}
       <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
         {/* <ambientLight /> */}
         <GridBackground cursorPosition={cursorPosition} />
       </Canvas>
-      {/* </CursorProvider> */}
     </>
   );
 }

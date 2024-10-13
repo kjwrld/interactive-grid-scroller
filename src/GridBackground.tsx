@@ -35,11 +35,10 @@ const GridBackground: React.FC<{
       uniforms: {
         uCursor: { value: new THREE.Vector2(0, 0) },
         uTime: { value: 0.0 },
-        uRadius: { value: 5.0 }, // Larger effect radius
-        uGridSpacing: { value: 1 }, // Lower frequency
-        uPulseSpeed: { value: 4.0 }, // Slower wave speed
-        uBaseColor: { value: new THREE.Color(0xd7d7d7) }, // Dark grid color
-        uHighlightColor: { value: new THREE.Color(0xf7f7f7) }, // White pulse color
+        uRadius: { value: 5.0 }, // Cursor effect radius
+        uGridSpacing: { value: 1.5 }, // Wave frequency
+        uPulseSpeed: { value: 4.0 }, // Wave speed
+        uDarkColor: { value: new THREE.Color(0xd7d7d7) }, // Fixed top-left color
       },
       vertexShader: `
         varying vec3 vPosition;
@@ -54,28 +53,38 @@ const GridBackground: React.FC<{
         uniform float uRadius;
         uniform float uGridSpacing;
         uniform float uPulseSpeed;
-        uniform vec3 uBaseColor;
-        uniform vec3 uHighlightColor;
+        uniform vec3 uDarkColor;
         varying vec3 vPosition;
 
+        // Ensure the triangle aligns with the top-left corner of the screen
+        bool isTopLeftTriangle(vec3 position) {
+          return position.x < 1.0 && position.y > -1.0 && position.y > position.x + 9.0;
+        }
+
         void main() {
-          // Calculate the distance from the current fragment to the cursor
+          if (isTopLeftTriangle(vPosition)) {
+            // Always render the top-left triangle with the fixed color
+            gl_FragColor = vec4(uDarkColor, 1.0);
+            return;
+          }
+
+          // Calculate distance from the cursor
           float dist = length(uCursor - vPosition.xy);
 
-          // Smoothly fade the effect using a wider range in smoothstep
-          float visibility = smoothstep(uRadius, uRadius - 3.0, dist);
+          // Generate pulsing wave effect
+          float wave = sin((dist - uTime * uPulseSpeed) / uGridSpacing);
 
-          // Generate a slower, lower frequency pulsing wave
-          float wave = sin((dist - uTime * uPulseSpeed) / uGridSpacing) * visibility;
-
-          // Normalize the wave effect to the range [0, 1]
+          // Normalize pulse effect
           float pulseEffect = 0.5 + 0.5 * wave;
 
-          // Blend the base and highlight colors based on the pulse effect
-          vec3 color = mix(uBaseColor, uHighlightColor, pulseEffect * visibility);
+          // Visibility based on distance from the cursor
+          float visibility = smoothstep(uRadius, uRadius - 3.0, dist);
 
-          // Output the final color with smooth alpha blending
-          gl_FragColor = vec4(color, visibility); 
+          // Apply the pulse effect to the color
+          vec3 finalColor = mix(vec3(1.0), uDarkColor, pulseEffect);
+
+          // Output the final color with visibility
+          gl_FragColor = vec4(finalColor, visibility);
         }
       `,
       transparent: true,
@@ -84,7 +93,7 @@ const GridBackground: React.FC<{
     return { geometry: gridGeometry, material: gridMaterial };
   }, [size]);
 
-  // Track the cursor position and update the shader
+  // Track the cursor and update the shader
   useFrame((state) => {
     if (gridRef.current) {
       const { x, y } = cursorPosition;
@@ -93,7 +102,7 @@ const GridBackground: React.FC<{
       const ndcX = (x / window.innerWidth) * 2 - 1;
       const ndcY = -(y / window.innerHeight) * 2 + 1;
 
-      // Raycast to find the world position on the grid plane
+      // Use raycaster to get the world position on the grid plane
       raycaster.current.setFromCamera({ x: ndcX, y: ndcY }, camera);
       const intersectionPoint = new THREE.Vector3();
       raycaster.current.ray.intersectPlane(
@@ -101,7 +110,7 @@ const GridBackground: React.FC<{
         intersectionPoint
       );
 
-      // Update shader uniforms with cursor position and elapsed time
+      // Update shader uniforms
       material.uniforms.uCursor.value.set(
         intersectionPoint.x,
         intersectionPoint.y

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import GridBackground from "./GridBackground.tsx";
-import { CursorProvider } from "./CursorContext.tsx";
 import "./App.css";
 
 function App() {
@@ -20,7 +19,7 @@ function App() {
   return (
     <>
       <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
-        {/* <ambientLight /> */}
+        <ambientLight />
         <GridBackground cursorPosition={cursorPosition} />
       </Canvas>
     </>

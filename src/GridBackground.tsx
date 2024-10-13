@@ -35,10 +35,10 @@ const GridBackground: React.FC<{
       uniforms: {
         uCursor: { value: new THREE.Vector2(0, 0) },
         uTime: { value: 0.0 },
-        uRadius: { value: 5.0 }, // Cursor effect radius
+        uRadius: { value: 4.0 }, // Cursor effect radius
         uGridSpacing: { value: 1.5 }, // Wave frequency
         uPulseSpeed: { value: 4.0 }, // Wave speed
-        uDarkColor: { value: new THREE.Color(0xd7d7d7) }, // Fixed top-left color
+        uDarkColor: { value: new THREE.Color(0x000000) }, // Fixed top-left color
       },
       vertexShader: `
         varying vec3 vPosition;

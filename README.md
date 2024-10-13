@@ -4,6 +4,8 @@
 
 The cursor moves as a radial gradiant highlighter lighting up the grid shader background
 
+https://github.com/user-attachments/assets/258360c3-2f0f-47c5-a745-20d5f5662299
+
 This project is built with React Three Fiber & Three.js 🔧
 
 ## Step 1:
@@ -61,7 +63,7 @@ Putting that all together this is what we have so far:
 
 https://github.com/user-attachments/assets/c3741914-3adf-4e9e-9f37-8bea5b5b2ce3
 
-## Step 1:
+## Step 2:
 
 ### Raycasting
 
@@ -94,6 +96,13 @@ useFrame((state) => {
 ```
 
 https://github.com/user-attachments/assets/68ebdbac-2525-461e-bb34-b9c88a580765
+
+## Step 3:
+
+### Details
+
+https://github.com/user-attachments/assets/cec7f7d3-f669-4373-bc97-73657b3cfa58
+
 
 
 

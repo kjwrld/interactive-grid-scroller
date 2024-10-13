@@ -1,7 +1,7 @@
 {
   "name": "grid-background",
   "version": "0.1.0",
-  "homepage": "https://kjwrld.github.io/interactive-grid-bg",
+  "homepage": "https://kjwrld.github.io/interactive-grid-scroller",
   "private": true,
   "dependencies": {
     "@react-three/drei": "^9.114.3",

@@ -4,7 +4,7 @@ body {
   padding: 0;
   overflow: hidden;
   height: 100%;
-  background-color: black;
+  /* background-color: white; */
 }
 
 #root {
@@ -15,9 +15,10 @@ canvas {
   display: block;
   width: 100vw;
   height: 100vh;
+  background-color: white;
 }
 
-.mouse-overlay {
+/* .mouse-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -32,4 +33,4 @@ canvas {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: background-position 0.1s;
-}
+} */

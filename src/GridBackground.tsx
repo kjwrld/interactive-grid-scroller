@@ -1,18 +1,16 @@
 // GridBackground.tsx
 import React, { useMemo, useRef, useEffect } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
-import { UnrealBloomPass } from "three-stdlib";
 import * as THREE from "three";
 
-// Extend LineSegments and UnrealBloomPass
-extend({ UnrealBloomPass, LineSegments: THREE.LineSegments });
+extend({ LineSegments: THREE.LineSegments });
 
 const GridBackground: React.FC<{
   cursorPosition: { x: number; y: number };
 }> = ({ cursorPosition }) => {
   const { size, camera } = useThree();
   const gridRef = useRef<THREE.LineSegments>(null);
-  const raycaster = useRef(new THREE.Raycaster()); // Raycaster for cursor tracking
+  const raycaster = useRef(new THREE.Raycaster());
 
   const { geometry, material } = useMemo(() => {
     const width = size.width;
@@ -21,7 +19,7 @@ const GridBackground: React.FC<{
 
     const positions: number[] = [];
 
-    // Create vertical and horizontal lines
+    // Generate vertical and horizontal grid lines
     for (let x = -width / 2; x <= width / 2; x += spacing) {
       positions.push(x, -height / 2, 0, x, height / 2, 0);
     }
@@ -37,10 +35,11 @@ const GridBackground: React.FC<{
       uniforms: {
         uCursor: { value: new THREE.Vector2(0, 0) },
         uTime: { value: 0.0 },
-        uGridSpacing: { value: 1.0 },
-        uPulseSpeed: { value: 5.0 },
-        uBaseColor: { value: new THREE.Color(0x222222) }, // Dark color
-        uHighlightColor: { value: new THREE.Color(0xffffff) }, // White highlight
+        uRadius: { value: 5.0 }, // Larger effect radius
+        uGridSpacing: { value: 1 }, // Lower frequency
+        uPulseSpeed: { value: 4.0 }, // Slower wave speed
+        uBaseColor: { value: new THREE.Color(0xd7d7d7) }, // Dark grid color
+        uHighlightColor: { value: new THREE.Color(0xf7f7f7) }, // White pulse color
       },
       vertexShader: `
         varying vec3 vPosition;
@@ -52,6 +51,7 @@ const GridBackground: React.FC<{
       fragmentShader: `
         uniform vec2 uCursor;
         uniform float uTime;
+        uniform float uRadius;
         uniform float uGridSpacing;
         uniform float uPulseSpeed;
         uniform vec3 uBaseColor;
@@ -59,19 +59,23 @@ const GridBackground: React.FC<{
         varying vec3 vPosition;
 
         void main() {
-          // Calculate distance from the current fragment to the cursor
+          // Calculate the distance from the current fragment to the cursor
           float dist = length(uCursor - vPosition.xy);
 
-          // Generate a pulsing wave based on time and distance from the cursor
-          float wave = sin((dist - uTime * uPulseSpeed) / uGridSpacing);
+          // Smoothly fade the effect using a wider range in smoothstep
+          float visibility = smoothstep(uRadius, uRadius - 3.0, dist);
 
-          // Normalize wave effect to 0-1 range
+          // Generate a slower, lower frequency pulsing wave
+          float wave = sin((dist - uTime * uPulseSpeed) / uGridSpacing) * visibility;
+
+          // Normalize the wave effect to the range [0, 1]
           float pulseEffect = 0.5 + 0.5 * wave;
 
-          // Mix colors based on the pulse effect
-          vec3 color = mix(uBaseColor, uHighlightColor, pulseEffect);
+          // Blend the base and highlight colors based on the pulse effect
+          vec3 color = mix(uBaseColor, uHighlightColor, pulseEffect * visibility);
 
-          gl_FragColor = vec4(color, 1.0);
+          // Output the final color with smooth alpha blending
+          gl_FragColor = vec4(color, visibility); 
         }
       `,
       transparent: true,
@@ -80,16 +84,16 @@ const GridBackground: React.FC<{
     return { geometry: gridGeometry, material: gridMaterial };
   }, [size]);
 
-  // Use raycaster to convert cursor position to world space
+  // Track the cursor position and update the shader
   useFrame((state) => {
     if (gridRef.current) {
       const { x, y } = cursorPosition;
 
-      // Convert mouse coordinates to NDC
+      // Convert cursor position to NDC (Normalized Device Coordinates)
       const ndcX = (x / window.innerWidth) * 2 - 1;
       const ndcY = -(y / window.innerHeight) * 2 + 1;
 
-      // Use raycaster to find the point in world space at z=0
+      // Raycast to find the world position on the grid plane
       raycaster.current.setFromCamera({ x: ndcX, y: ndcY }, camera);
       const intersectionPoint = new THREE.Vector3();
       raycaster.current.ray.intersectPlane(
@@ -97,6 +101,7 @@ const GridBackground: React.FC<{
         intersectionPoint
       );
 
+      // Update shader uniforms with cursor position and elapsed time
       material.uniforms.uCursor.value.set(
         intersectionPoint.x,
         intersectionPoint.y
@@ -105,6 +110,7 @@ const GridBackground: React.FC<{
     }
   });
 
+  // Clean up resources on unmount
   useEffect(() => {
     return () => {
       geometry.dispose();

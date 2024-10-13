@@ -1,4 +1,3 @@
-// App.tsx
 import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import GridBackground from "./GridBackground.tsx";

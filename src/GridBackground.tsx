@@ -1,6 +1,6 @@
-// GridBackground.tsx
 import React, { useMemo, useRef, useEffect } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
+import { useControls } from "leva";
 import * as THREE from "three";
 
 extend({ LineSegments: THREE.LineSegments });
@@ -11,6 +11,13 @@ const GridBackground: React.FC<{
   const { size, camera } = useThree();
   const gridRef = useRef<THREE.LineSegments>(null);
   const raycaster = useRef(new THREE.Raycaster());
+
+  const { uRadius, uGridSpacing, uPulseSpeed, uDarkColor } = useControls({
+    uRadius: { value: 5.0, min: 1.0, max: 10.0, step: 0.1 },
+    uGridSpacing: { value: 1.5, min: 0.5, max: 5.0, step: 0.1 },
+    uPulseSpeed: { value: 4.0, min: 0.1, max: 10.0, step: 0.1 },
+    uDarkColor: { value: "#000000" },
+  });
 
   const { geometry, material } = useMemo(() => {
     const width = size.width;
@@ -35,10 +42,10 @@ const GridBackground: React.FC<{
       uniforms: {
         uCursor: { value: new THREE.Vector2(0, 0) },
         uTime: { value: 0.0 },
-        uRadius: { value: 4.0 }, // Cursor effect radius
-        uGridSpacing: { value: 1.5 }, // Wave frequency
-        uPulseSpeed: { value: 4.0 }, // Wave speed
-        uDarkColor: { value: new THREE.Color(0x000000) }, // Fixed top-left color
+        uRadius: { value: uRadius },
+        uGridSpacing: { value: uGridSpacing },
+        uPulseSpeed: { value: uPulseSpeed },
+        uDarkColor: { value: new THREE.Color(uDarkColor) },
       },
       vertexShader: `
         varying vec3 vPosition;
@@ -91,7 +98,7 @@ const GridBackground: React.FC<{
     });
 
     return { geometry: gridGeometry, material: gridMaterial };
-  }, [size]);
+  }, [size, uRadius, uGridSpacing, uPulseSpeed, uDarkColor]);
 
   useFrame((state) => {
     if (gridRef.current) {

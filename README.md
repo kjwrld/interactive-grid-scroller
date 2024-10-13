@@ -93,7 +93,8 @@ useFrame((state) => {
 });
 ```
 
-https://github.com/user-attachments/assets/f2cb4b55-915e-4592-988b-3c7ec2c4ecdf
+https://github.com/user-attachments/assets/68ebdbac-2525-461e-bb34-b9c88a580765
+
 
 
 

@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/interactive-grid-scroller/static/css/main.41fa07fc.css",
+    "main.js": "/interactive-grid-scroller/static/js/main.2cc965d8.js",
+    "index.html": "/interactive-grid-scroller/index.html",
+    "main.41fa07fc.css.map": "/interactive-grid-scroller/static/css/main.41fa07fc.css.map",
+    "main.2cc965d8.js.map": "/interactive-grid-scroller/static/js/main.2cc965d8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.41fa07fc.css",
+    "static/js/main.2cc965d8.js"
+  ]
+}

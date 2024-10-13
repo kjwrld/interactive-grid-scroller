@@ -93,16 +93,13 @@ const GridBackground: React.FC<{
     return { geometry: gridGeometry, material: gridMaterial };
   }, [size]);
 
-  // Track the cursor and update the shader
   useFrame((state) => {
     if (gridRef.current) {
       const { x, y } = cursorPosition;
 
-      // Convert cursor position to NDC (Normalized Device Coordinates)
       const ndcX = (x / window.innerWidth) * 2 - 1;
       const ndcY = -(y / window.innerHeight) * 2 + 1;
 
-      // Use raycaster to get the world position on the grid plane
       raycaster.current.setFromCamera({ x: ndcX, y: ndcY }, camera);
       const intersectionPoint = new THREE.Vector3();
       raycaster.current.ray.intersectPlane(
@@ -110,7 +107,6 @@ const GridBackground: React.FC<{
         intersectionPoint
       );
 
-      // Update shader uniforms
       material.uniforms.uCursor.value.set(
         intersectionPoint.x,
         intersectionPoint.y
@@ -119,7 +115,6 @@ const GridBackground: React.FC<{
     }
   });
 
-  // Clean up resources on unmount
   useEffect(() => {
     return () => {
       geometry.dispose();
